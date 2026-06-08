@@ -1,0 +1,216 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <meta name="description"
+        content="Shivarth's EleutherAI SOAR Proposal">
+  <meta name="keywords" content="Object Tracking, Inpainting, SAM 2, YOLO, ProPainter, Drone">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Shivarth's EleutherAI SOAR Proposal</title>
+
+  <link href="https://fonts.googleapis.com/css?family=Google+Sans|Noto+Sans|Castoro" rel="stylesheet">
+  <link rel="stylesheet" href="./static/css/bulma.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-carousel.min.css">
+  <link rel="stylesheet" href="./static/css/bulma-slider.min.css">
+  <link rel="stylesheet" href="./static/css/fontawesome.all.min.css">
+  <link rel="stylesheet" href="https://cdn.jsdelivr.net/gh/jpswalsh/academicons@1/css/academicons.min.css">
+  <link rel="stylesheet" href="./static/css/index.css">
+
+  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.5.1/jquery.min.js"></script>
+  <script defer src="./static/js/fontawesome.all.min.js"></script>
+  <script src="./static/js/bulma-carousel.min.js"></script>
+  <script src="./static/js/bulma-slider.min.js"></script>
+  <script src="./static/js/index.js"></script>
+</head>
+<body>
+
+<section class="hero">
+  <div class="hero-body">
+    <div class="container is-max-desktop">
+      <div class="columns is-centered">
+        <div class="column has-text-centered">
+          <h1 class="title is-1 publication-title">Editable Scene Simulation for Autonomous Drones</h1>
+          <h2 class="title is-3 has-text-grey">EleutherAI SOAR Project Proposal</h2>
+          
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">
+              <strong>Shivarth Rai</strong>
+            </span>
+          </div>
+
+          <div class="is-size-5 publication-authors">
+            <span class="author-block">Manipal Institute of Technology</span>
+          </div>
+
+          <div class="column has-text-centered">
+            <div class="publication-links">
+              <span class="link-block">
+                <a href="https://github.com/your-repo/eleuther-soar-drone"
+                   class="external-link button is-normal is-rounded is-dark">
+                  <span class="icon">
+                      <i class="fab fa-github"></i>
+                  </span>
+                  <span>Code Repository</span>
+                  </a>
+              </span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="hero teaser" style="margin-top: 2rem; margin-bottom: 2rem;">
+  <div class="container is-fullhd">
+    <div class="hero-body">
+      
+      <div class="columns is-centered is-vcentered">
+        
+        <div class="column has-text-centered">
+          <video autoplay controls muted loop playsinline width="100%" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+            <source src="./static/videos/drone_clip_two.mp4" type="video/mp4">
+          </video>
+          <p class="is-size-6 has-text-grey mt-2 has-text-weight-semibold">1. Original Drone Input</p>
+        </div>
+
+        <div class="column has-text-centered">
+          <video autoplay controls muted loop playsinline width="100%" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+            <source src="./static/videos/inpainted_drone_shot.mp4" type="video/mp4">
+          </video>
+          <p class="is-size-6 has-text-grey mt-2 has-text-weight-semibold">2. Inpainted Background</p>
+        </div>
+
+        <div class="column has-text-centered">
+          <video autoplay controls muted loop playsinline width="100%" style="border-radius: 8px; box-shadow: 0 4px 8px rgba(0,0,0,0.1);">
+            <source src="./static/videos/final_ferrari_shot_fixed.mp4" type="video/mp4">
+          </video>
+          <p class="is-size-6 has-text-grey mt-2 has-text-weight-semibold">3. Edited Scene</p>
+        </div>
+
+      </div>
+
+      <h2 class="subtitle has-text-centered mt-5">
+        An end-to-end pipeline combining <strong>YOLO + SAM 2 tracking</strong>, <strong>ProPainter inpainting</strong>, and <strong>anti-jitter trajectory smoothing</strong> to seamlessly replace moving vehicles in aerial drone footage.
+      </h2>
+
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered has-text-centered">
+      <div class="column is-four-fifths">
+        <h2 class="title is-3">Implementation Overview</h2>
+        <div class="content has-text-justified">
+          <p>
+            Modifying moving objects in dynamic drone footage introduces significant challenges in temporal consistency, spatial memory limits, and trajectory jitter. This page documents my implementation of a robust, VRAM-efficient initial pipeline for drone-scene object replacement utilizing state-of-the-art computer vision models.
+          </p>
+          <p>
+            I engineered an auto-exposure stabilized tracking phase leveraging a finetuned top-down <strong>YOLO</strong> model paired with <strong>SAM 2</strong>. By extracting rotated bounding boxes (via <code>cv2.minAreaRect</code>), I successfully captured the true physical body angle of the target vehicle, completely bypassing the limitations of standard axis-aligned bounding boxes. To ensure clean removals without drop-shadow artifacts, I utilized heavily dilated masks and processed the footage through <strong>ProPainter</strong> using split-inference chunking for consumer GPUs. Finally, I built a custom compositing engine with a 21-frame moving average filter to inject 2D assets flawlessly.
+          </p>
+        </div>
+      </div>
+    </div>
+    </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <div class="columns is-centered">
+      <div class="column is-full-width">
+        <h2 class="title is-3 has-text-centered mb-6">Pipeline Steps & Execution</h2>
+
+        <div class="columns is-vcentered step-container">
+          <div class="column is-half">
+            <h3 class="title is-4">Step 1: Precision Tracking & Masking</h3>
+            <div class="content has-text-justified">
+              <p>
+                First, I implemented a stabilization loop to account for the drone camera's auto-exposure shifts. I then passed the frames to a fine-tuned <strong>YOLO</strong> model to detect the target vehicle. 
+              </p>
+              <p>
+                Once targeted, <strong>SAM 2</strong> generated pixel-perfect segmentation masks. Instead of relying on jittery bounding boxes for directionality, I used OpenCV to wrap the SAM 2 mask in a rotated bounding box, allowing us to extract and save the true physical heading angle and center coordinates of the car to a log file.
+              </p>
+            </div>
+          </div>
+          <div class="column is-half">
+            <video autoplay controls muted loop playsinline class="step-video">
+              <source src="./static/videos/sam2_drone_clip_two_fixed.mp4" type="video/mp4">
+            </video>
+            <p class="has-text-centered has-text-grey is-size-7 mt-2">SAM 2 Masking & Tracking</p>
+          </div>
+        </div>
+
+        <div class="columns is-vcentered step-container" style="flex-direction: row-reverse;">
+          <div class="column is-half">
+            <h3 class="title is-4">Step 2: Deep Temporal Inpainting</h3>
+            <div class="content has-text-justified">
+              <p>
+                Because SAM 2 masks the car perfectly but leaves the drop shadow behind, I mathematically dilated the binary masks by 25 pixels to swallow the shadow entirely. 
+              </p>
+              <p>
+                I then downscaled the footage to 360p to protect GPU memory and ran <strong>ProPainter</strong>. I forced the optical flow network to look 60 frames deep into the past and future. Because the expanded mask removed all traces of the car, the inpainter successfully hallucinated a perfectly clean, seamless road texture.
+              </p>
+            </div>
+          </div>
+          <div class="column is-half">
+            <video autoplay controls muted loop playsinline class="step-video">
+              <source src="./static/videos/inpainted_drone_shot.mp4" type="video/mp4">
+            </video>
+            <p class="has-text-centered has-text-grey is-size-7 mt-2">ProPainter Background Generation</p>
+          </div>
+        </div>
+
+        <div class="columns is-vcentered step-container">
+          <div class="column is-half">
+            <h3 class="title is-4">Step 3: Cinematic Trajectory Compositing</h3>
+            <div class="content has-text-justified">
+              <p>
+                Finally, I built a Python compositing engine to inject the new 2D asset (a Ferrari). Raw tracking data inherently suffers from single-pixel vibrations and angular snap-glitches. 
+              </p>
+              <p>
+                I implemented strict mathematical continuity to prevent the car from flipping 180 degrees randomly. I then unwrapped the radians and applied a heavy <strong>21-frame moving average filter</strong> to both the position coordinates and the rotation angle, creating a Steadicam-like invisible rail for the asset to glide smoothly across the inpainted background.
+              </p>
+            </div>
+          </div>
+          <div class="column is-half">
+            <video autoplay controls muted loop playsinline class="step-video">
+              <source src="./static/videos/final_ferrari_shot_fixed.mp4" type="video/mp4">
+            </video>
+            <p class="has-text-centered has-text-grey is-size-7 mt-2">Final Smoothed Compositing</p>
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </div>
+</section>
+
+<section class="section">
+  <div class="container is-max-desktop">
+    <h2 class="title is-3">Next Steps: Extending to 3D Scene Simulation</h2>
+    <div class="content has-text-justified">
+      <p>
+        While this 2D pixel-space pipeline provides a high-fidelity baseline for asset tracking and background clean-plating, true simulation requires 3D geometric awareness. The next phase of this work involves adapting <strong>3D Gaussian Splatting (3DGS)</strong> to the static, inpainted backgrounds. This will transition the pipeline from 2D layer compositing to full 6-DOF scene simulation, allowing novel 3D vehicle assets to experience realistic perspective changes, depth occlusions, and environmental lighting interactions.
+      </p>
+    </div>
+  </div>
+</section>
+
+<footer class="footer">
+  <div class="container">
+    <div class="columns is-centered">
+      <div class="column is-8">
+        <div class="content has-text-centered">
+          <p>
+            Template adapted from <a href="https://github.com/nerfies/nerfies.github.io">Nerfies</a>. 
+          </p>
+        </div>
+      </div>
+    </div>
+  </div>
+</footer>
+
+</body>
+</html>
