@@ -31,7 +31,7 @@ The system is broken down into three modular stages:
 ### Step 1: Clone the Repository & Setup Environment
 First, clone this codebase and create a fresh Python environment to avoid dependency conflicts.
 ```bash
-git clone [https://github.com/yourusername/eleuther-soar-drone.git](https://github.com/yourusername/eleuther-soar-drone.git)
+git clone https://github.com/Shvrth/eleuther-soar-drone.git
 cd eleuther-soar-drone
 
 # Create and activate a virtual environment
